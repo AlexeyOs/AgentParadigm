@@ -1,4 +1,4 @@
-package ru.osetsky.B;
+package osetsky.B;
 
  import jade.core.Agent;
  import jade.core.behaviours.*;

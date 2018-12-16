@@ -6,17 +6,13 @@
 
     <groupId>ru.osetsky</groupId>
     <artifactId>agent</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>lab_01</module>
+        <module>lab_03a</module>
+    </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.tilab.jade</groupId>
-            <artifactId>jade</artifactId>
-            <version>4.5.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jade.jar</systemPath>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>

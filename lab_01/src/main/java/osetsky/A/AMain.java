@@ -1,4 +1,4 @@
-package ru.osetsky.A;
+package osetsky.A;
 
 import jade.core.Agent;
 import jade.core.AID;
