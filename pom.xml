@@ -10,7 +10,8 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>lab_01</module>
-        <module>lab_03a</module>
+        <module>lab_03</module>
+        <module>individual_08</module>
     </modules>
 
 
