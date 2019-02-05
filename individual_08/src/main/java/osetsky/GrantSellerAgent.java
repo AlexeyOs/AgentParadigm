@@ -13,9 +13,9 @@ import jade.lang.acl.MessageTemplate;
 import java.util.Hashtable;
 
 public class GrantSellerAgent extends Agent {
-    // The catalogue of books for sale (maps the title of a book to its price)
+    // The catalogue of grants for sale (maps the title of a grant to its price)
     private Hashtable catalogue;
-    // The GUI by means of which the user can add books in the catalogue
+    // The GUI by means of which the user can add grants in the catalogue
     private GrantSellerGui myGui;
 
     // Put agent initializations here
@@ -27,7 +27,7 @@ public class GrantSellerAgent extends Agent {
         myGui = new GrantSellerGui(this);
         myGui.show();
 
-        // Register the book-selling service in the yellow pages
+        // Register the grant-selling service in the yellow pages
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
@@ -64,22 +64,24 @@ public class GrantSellerAgent extends Agent {
     }
 
     /**
-     This is invoked by the GUI when the user adds a new book for sale
+     This is invoked by the GUI when the user adds a new grant for sale
      */
-    public void updateCatalogue(final String title, final int price) {
+    public void updateCatalogue(final String title, final int price, final int period) {
         addBehaviour(new OneShotBehaviour() {
             public void action() {
                 catalogue.put(title, new Integer(price));
-                System.out.println(title+" inserted into catalogue. Price = "+price);
+                catalogue.put(title+"period", new Integer(period));
+                System.out.println(title+" inserted into catalogue. Price = " + price);
+                System.out.println(title+" inserted into catalogue. Period in months = " + period);
             }
         } );
     }
 
     /**
      Inner class OfferRequestsServer.
-     This is the behaviour used by Book-seller agents to serve incoming requests
+     This is the behaviour used by Grant-seller agents to serve incoming requests
      for offer from buyer agents.
-     If the requested book is in the local catalogue the seller agent replies
+     If the requested grant is in the local catalogue the seller agent replies
      with a PROPOSE message specifying the price. Otherwise a REFUSE message is
      sent back.
      */
@@ -93,13 +95,16 @@ public class GrantSellerAgent extends Agent {
                 ACLMessage reply = msg.createReply();
 
                 Integer price = (Integer) catalogue.get(title);
-                if (price != null) {
-                    // The requested book is available for sale. Reply with the price
+                Integer period = (Integer) catalogue.get(title + "period");
+                System.out.println(price);
+                if (price != null && period != null) {
+                    // The requested grant is available for sale. Reply with the price
                     reply.setPerformative(ACLMessage.PROPOSE);
-                    reply.setContent(String.valueOf(price.intValue()));
+                    reply.setContent(String.valueOf(price.intValue()) + ","
+                            + String.valueOf(period.intValue()));
                 }
                 else {
-                    // The requested book is NOT available for sale.
+                    // The requested grant is NOT available for sale.
                     reply.setPerformative(ACLMessage.REFUSE);
                     reply.setContent("not-available");
                 }
@@ -113,9 +118,9 @@ public class GrantSellerAgent extends Agent {
 
     /**
      Inner class PurchaseOrdersServer.
-     This is the behaviour used by Book-seller agents to serve incoming
+     This is the behaviour used by Grant-seller agents to serve incoming
      offer acceptances (i.e. purchase orders) from buyer agents.
-     The seller agent removes the purchased book from its catalogue
+     The seller agent removes the purchased grant from its catalogue
      and replies with an INFORM message to notify the buyer that the
      purchase has been sucesfully completed.
      */
@@ -129,12 +134,13 @@ public class GrantSellerAgent extends Agent {
                 ACLMessage reply = msg.createReply();
 
                 Integer price = (Integer) catalogue.remove(title);
-                if (price != null) {
+                Integer period = (Integer) catalogue.remove(title + "period");
+                if (price != null && period != null) {
                     reply.setPerformative(ACLMessage.INFORM);
                     System.out.println(title+" sold to agent "+msg.getSender().getName());
                 }
                 else {
-                    // The requested book has been sold to another buyer in the meanwhile .
+                    // The requested grant has been sold to another buyer in the meanwhile .
                     reply.setPerformative(ACLMessage.FAILURE);
                     reply.setContent("not-available");
                 }

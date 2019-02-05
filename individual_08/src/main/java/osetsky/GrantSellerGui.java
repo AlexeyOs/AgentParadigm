@@ -13,7 +13,7 @@ import java.awt.event.WindowEvent;
 class GrantSellerGui extends JFrame {
     private GrantSellerAgent myAgent;
 
-    private JTextField titleField, priceField;
+    private JTextField titleField, priceField, periodField;
 
     GrantSellerGui(GrantSellerAgent a) {
         super(a.getLocalName());
@@ -21,16 +21,16 @@ class GrantSellerGui extends JFrame {
         myAgent = a;
 
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(2, 2));
+        p.setLayout(new GridLayout(3, 2));
         p.add(new JLabel("Grant title:"));
         titleField = new JTextField(15);
         p.add(titleField);
         p.add(new JLabel("Price:"));
         priceField = new JTextField(15);
         p.add(priceField);
-        p.add(new JLabel("Period of execution:"));
-        priceField = new JTextField(15);
-        p.add(priceField);
+        p.add(new JLabel("Period of execution in count months:"));
+        periodField = new JTextField(16);
+        p.add(periodField);
         getContentPane().add(p, BorderLayout.CENTER);
 
         JButton addButton = new JButton("Add");
@@ -39,9 +39,11 @@ class GrantSellerGui extends JFrame {
                 try {
                     String title = titleField.getText().trim();
                     String price = priceField.getText().trim();
-                    myAgent.updateCatalogue(title, Integer.parseInt(price));
+                    String period = periodField.getText().trim();
+                    myAgent.updateCatalogue(title, Integer.parseInt(price),Integer.parseInt(period));
                     titleField.setText("");
                     priceField.setText("");
+                    periodField.setText("");
                 }
                 catch (Exception e) {
                     JOptionPane.showMessageDialog(GrantSellerGui.this, "Invalid values. "+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
